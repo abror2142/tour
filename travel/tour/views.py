@@ -4,144 +4,95 @@ from .models import TourClass, Hotel, Travel
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework import generics
+from rest_framework import mixins
 
 
-class TravelView(APIView):
+class TravelListView(mixins.ListModelMixin, 
+                 mixins.CreateModelMixin,
+                 generics.GenericAPIView):
+    queryset = Travel.objects.all()
+    serializer_class = TravelSerializer
     
-    def get(self, request, pk=None):
-        if pk is None:
-            travels = Travel.objects.all()
-            serializer = TravelSerializer(travels, many=True)
-            return Response({'travels': serializer.data, "detail": "All travels!"})
-        try:
-            travel = Travel.objects.get(pk=pk)
-        except Travel.DoesNotExist:
-            return Response({'detail': "Object does not exist!"})
-        else:
-            serializer = TravelSerializer(travel)
-            return Response({'travel': serializer.data, "detail": "Travel detail."})
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
-    def post(self, request):
-        serializer = TravelSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({'travel': serializer.data, "detail": "A travel has been added successfully."})
-    
-    def put(self, request, pk=None):
-        if pk is None:
-            return Response({"detail": "A valid pk should be provided"})
-        try: 
-            travel = Travel.objects.get(pk=pk)
-        except Travel.DoesNotExist:
-            return Response({'detail': 'Object does not exist!'})
-        else:
-            serializer = TravelSerializer(instance=travel, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({'new_travel': serializer.data, "detail": "A travel has been changed successfully!"})
-        
-    def delete(self, request, pk):
-        if pk is None:
-            return Response({"detail": "Method \"DELETE\" not allowed."})
-        try:
-            travel = Travel.objects.get(pk=pk)
-        except Travel.DoesNotExist:
-            return Response({'detail': "Object does not exist!"})
-        else:
-            travel.delete()
-            return Response({"detail": "A travel has been successfully deleted."})
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
     
 
-        
-        
-class TourClassView(APIView):
+class TravelDetailView(mixins.RetrieveModelMixin, 
+                 mixins.UpdateModelMixin,
+                 mixins.DestroyModelMixin,
+                 generics.GenericAPIView): 
+    queryset = Travel.objects.all()
+    serializer_class = TravelSerializer
     
-    def get(self, request, pk=None):
-        if pk is None:
-            tour_classes = TourClass.objects.all()
-            serializer = TourClassSerializer(tour_classes, many=True)
-            return Response({'tour_classes': serializer.data, "detail": "All tour classes!"})
-        try:
-            tour_class = TourClass.objects.get(pk=pk)
-        except TourClass.DoesNotExist:
-            return Response({'detail': "Object does not exist!"})
-        else:
-            serializer = TourClassSerializer(tour_class)
-            return Response({'tour_class': serializer.data, "detail": "Tour class detail."})
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
     
-    def post(self, request):
-        serializer = TourClassSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({'tour_class': serializer.data, "detail": "A tour class has been added successfully."})
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
     
-    def put(self, request, pk=None):
-        if pk is None:
-            return Response({"detail": "A valid pk should be provided"})
-        try: 
-            tour_class = TourClass.objects.get(pk=pk)
-        except TourClass.DoesNotExist:
-            return Response({'detail': 'Object does not exist!'})
-        else:
-            serializer = TourClassSerializer(instance=tour_class, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({'new_tour_class': serializer.data, "detail": "A tour class has been changed successfully!"})
-        
-    def delete(self, request, pk):
-        if pk is None:
-            return Response({"detail": "Method \"DELETE\" not allowed."})
-        try:
-            tour_class = TourClass.objects.get(pk=pk)
-        except TourClass.DoesNotExist:
-            return Response({'detail': "Object does not exist!"})
-        else:
-            tour_class.delete()
-            return Response({"detail": "Tour class has been successfully deleted."})
+    
+class TourClassListView(mixins.ListModelMixin, 
+                 mixins.CreateModelMixin,
+                 generics.GenericAPIView):
+    queryset = TourClass.objects.all()
+    serializer_class = TourClassSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
     
 
-class HotelView(APIView):
+class TourClassDetailView(mixins.RetrieveModelMixin, 
+                 mixins.UpdateModelMixin,
+                 mixins.DestroyModelMixin,
+                 generics.GenericAPIView): 
+    queryset = TourClass.objects.all()
+    serializer_class = TourClassSerializer
     
-    def get(self, request, pk=None):
-        if pk is None:
-            hotels = Hotel.objects.all()
-            serializer = HotelSerializer(hotels, many=True)
-            return Response({'hotels': serializer.data, "detail": "All hotels!"})
-        try:
-            hotel = Hotel.objects.get(pk=pk)
-        except Hotel.DoesNotExist:
-            return Response({'detail': "Object does not exist!"})
-        else:
-            serializer = HotelSerializer(hotel)
-            return Response({'hotel': serializer.data, "detail": "Hotel detail."})
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
     
-    def post(self, request):
-        serializer = HotelSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({'hotel': serializer.data, "detail": "A hotel has been added successfully."})
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class HotelListView(mixins.ListModelMixin, 
+                 mixins.CreateModelMixin,
+                 generics.GenericAPIView):
+    queryset = Hotel.objects.all()
+    serializer_class = HotelSerializer
     
-    def put(self, request, pk=None):
-        if pk is None:
-            return Response({"detail": "A valid pk should be provided"})
-        try: 
-            hotel = Hotel.objects.get(pk=pk)
-        except Hotel.DoesNotExist:
-            return Response({'detail': 'Object does not exist!'})
-        else:
-            serializer = HotelSerializer(instance=hotel, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({'new_hotel': serializer.data, "detail": "A hotel has been changed successfully!"})
-        
-    def delete(self, request, pk):
-        if pk is None:
-            return Response({"detail": "Method \"DELETE\" not allowed."})
-        try:
-            hotel = Hotel.objects.get(pk=pk)
-        except Hotel.DoesNotExist:
-            return Response({'detail': "Object does not exist!"})
-        else:
-            hotel.delete()
-            return Response({"detail": "A hotel has been successfully deleted."})
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+
+class HotelDetailView(mixins.RetrieveModelMixin, 
+                 mixins.UpdateModelMixin,
+                 mixins.DestroyModelMixin,
+                 generics.GenericAPIView): 
+    queryset = Hotel.objects.all()
+    serializer_class = HotelSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
